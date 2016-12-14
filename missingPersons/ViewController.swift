@@ -28,7 +28,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func player1Source(sender: AnyObject) {
         
-        
+        self.player1?.faceID = nil
         choosePlayer1 = true
         
         imagePicker.sourceType = .PhotoLibrary
@@ -38,7 +38,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func player2Source(sender: AnyObject) {
         
-        
+        self.player2?.faceID = nil
         
         choosePlayer2 = true
         
@@ -102,6 +102,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 
                 player1?.downloadFaceID()
                 
+                
+                
+                
                 self.checkForMatchBtn.setTitle("Please wait", forState: .Normal)
                 self.checkForMatchBtn.backgroundColor = UIColor.redColor()
                 
@@ -111,6 +114,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.checkForMatchBtn.userInteractionEnabled = true
                     
                 }
+                
+                
                 
             }
             
@@ -157,7 +162,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func showErrorAlert() {
         
-        let alert = UIAlertController(title: "Select Image", message: "Please select two images with human faces", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and check that you have valid internet connection and try again", preferredStyle: UIAlertControllerStyle.Alert)
         let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil)
         alert.addAction(ok)
         self.presentViewController(alert, animated: true, completion: nil)
@@ -184,7 +189,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     print(result.confidence)
                     print(result.isIdentical)
                     
-                    let alert = UIAlertController(title: "Result", message: "Same Person: \(String(result.isIdentical).capitalizedString)\n Confidence Interval:  %\(String(format: "%.2f", Double(result.confidence)*100))", preferredStyle: UIAlertControllerStyle.Alert)
+                    let alert = UIAlertController(title: "Result", message: "Same Person: \(String(result.isIdentical).capitalizedString)\n Similarity Rate:  %\(String(format: "%.2f", Double(result.confidence)*100))", preferredStyle: UIAlertControllerStyle.Alert)
                     let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil)
                     alert.addAction(ok)
                     self.presentViewController(alert, animated: true, completion: nil)
@@ -204,8 +209,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             })
 
 
-            
+         
         }
+        
+        
         
     }
 
