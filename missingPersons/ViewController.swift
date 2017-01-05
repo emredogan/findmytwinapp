@@ -13,8 +13,8 @@ import ProjectOxfordFace
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
    
-    var player1 = Person?()
-    var player2 = Person?()
+    var player1 = Person(personImage: UIImage(named: "profile")!)
+    var player2 = Person(personImage: UIImage(named: "profile")!)
     
     @IBOutlet weak var player1Img: UIImageView!
     
@@ -26,24 +26,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     
-    @IBAction func player1Source(sender: AnyObject) {
+    @IBAction func player1Source(_ sender: AnyObject) {
         
-        self.player1?.faceID = nil
+        self.player1.faceID = nil
         choosePlayer1 = true
         
-        imagePicker.sourceType = .PhotoLibrary
-        presentViewController(imagePicker, animated: true, completion: nil)
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
         
     }
     
-    @IBAction func player2Source(sender: AnyObject) {
+    @IBAction func player2Source(_ sender: AnyObject) {
         
-        self.player2?.faceID = nil
+        self.player2.faceID = nil
         
         choosePlayer2 = true
         
-        imagePicker.sourceType = .PhotoLibrary
-        presentViewController(imagePicker, animated: true, completion: nil)
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
         
     }
     
@@ -74,44 +74,40 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     
     
-    func delay(delay: Double, closure: ()->()) {
+    func delay(_ delay: Double, closure: @escaping ()->()) {
         
         
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ),
-            dispatch_get_main_queue(),
-            closure
+        DispatchQueue.main.asyncAfter(
+            deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC),
+            execute: closure
         )
     }
     
     
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
             
             if choosePlayer1 == true {
                 
-                self.checkForMatchBtn.userInteractionEnabled = false
+                self.checkForMatchBtn.isUserInteractionEnabled = false
                 
                 player1Img.image = pickedImage
                 
-                player1?.personImage = pickedImage
+                player1.personImage = pickedImage
                 
-                player1?.downloadFaceID()
-                
-                
+                player1.downloadFaceID()
                 
                 
-                self.checkForMatchBtn.setTitle("Please wait", forState: .Normal)
-                self.checkForMatchBtn.backgroundColor = UIColor.redColor()
+                
+                
+                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
+                self.checkForMatchBtn.backgroundColor = UIColor.red
                 
                 delay(2) {
-                    self.checkForMatchBtn.setTitle("Check now", forState: .Normal)
-                    self.checkForMatchBtn.backgroundColor = UIColor.greenColor()
-                    self.checkForMatchBtn.userInteractionEnabled = true
+                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
+                    self.checkForMatchBtn.backgroundColor = UIColor.green
+                    self.checkForMatchBtn.isUserInteractionEnabled = true
                     
                 }
                 
@@ -121,22 +117,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             if choosePlayer2 == true {
                 
-                self.checkForMatchBtn.userInteractionEnabled = false
+                self.checkForMatchBtn.isUserInteractionEnabled = false
                 
                 
                 player2Img.image = pickedImage
                 
-                player2?.personImage = pickedImage
+                player2.personImage = pickedImage
                 
-                player2?.downloadFaceID()
+                player2.downloadFaceID()
                 
-                self.checkForMatchBtn.setTitle("Please wait", forState: .Normal)
-                self.checkForMatchBtn.backgroundColor = UIColor.redColor()
+                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
+                self.checkForMatchBtn.backgroundColor = UIColor.red
                 
                 delay(2) {
-                    self.checkForMatchBtn.setTitle("Check now", forState: .Normal)
-                    self.checkForMatchBtn.backgroundColor = UIColor.greenColor()
-                    self.checkForMatchBtn.userInteractionEnabled = true
+                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
+                    self.checkForMatchBtn.backgroundColor = UIColor.green
+                    self.checkForMatchBtn.isUserInteractionEnabled = true
                     
                 }
                 
@@ -147,52 +143,52 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
         }
         
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
         
         
     }
     
-    func loadPicker(gesture:UITapGestureRecognizer) {
+    func loadPicker(_ gesture:UITapGestureRecognizer) {
         
         imagePicker.allowsEditing = false
-        imagePicker.sourceType = .PhotoLibrary
-        presentViewController(imagePicker, animated: true, completion: nil)
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
         
     }
     
     func showErrorAlert() {
         
-        let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and check that you have valid internet connection and try again", preferredStyle: UIAlertControllerStyle.Alert)
-        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil)
+        let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and check that you have valid internet connection and try again", preferredStyle: UIAlertControllerStyle.alert)
+        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
         alert.addAction(ok)
-        self.presentViewController(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
         
     }
     
-    @IBAction func checkMatch(sender: AnyObject) {
+    @IBAction func checkMatch(_ sender: AnyObject) {
         
-        print(self.player1?.faceID)
-        print(self.player2?.faceID)
+        print(self.player1.faceID)
+        print(self.player2.faceID)
         
         
-        if  self.player1?.faceID == nil || self.player2?.faceID == nil  {
+        if  self.player1.faceID == nil || self.player2.faceID == nil  {
             
             showErrorAlert()
             
             
         } else {
             
-            FaceService.instance.client.verifyWithFirstFaceId(self.player1?.faceID, faceId2: self.player2?.faceID, completionBlock: { (result:MPOVerifyResult!, err:NSError!) in
+            FaceService.instance.client?.verify(withFirstFaceId: self.player1.faceID, faceId2: self.player2.faceID, completionBlock: { (result:MPOVerifyResult?, err:Error?) in
                 
                 if err == nil {
                     
-                    print(result.confidence)
-                    print(result.isIdentical)
+                    print(result?.confidence)
+                    print(result?.isIdentical)
                     
-                    let alert = UIAlertController(title: "Result", message: "Same Person: \(String(result.isIdentical).capitalizedString)\n Similarity Rate:  %\(String(format: "%.2f", Double(result.confidence)*100))", preferredStyle: UIAlertControllerStyle.Alert)
-                    let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil)
+                    let alert = UIAlertController(title: "Result", message: "Same Person: \(String(describing: result!.isIdentical).capitalized)\n Similarity Rate:  %\(String(format: "%.2f", Double((result?.confidence)!)*100))", preferredStyle: UIAlertControllerStyle.alert)
+                    let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
                     alert.addAction(ok)
-                    self.presentViewController(alert, animated: true, completion: nil)
+                    self.present(alert, animated: true, completion: nil)
                     
                     
                     

@@ -29,10 +29,10 @@ class Person {
             
 
             
-            FaceService.instance.client.detectWithData(imgData, returnFaceId: true, returnFaceLandmarks: false, returnFaceAttributes: nil, completionBlock: { (faces: [MPOFace]!, err: NSError!) in
-                if err == nil! {
+            FaceService.instance.client?.detect(with: imgData, returnFaceId: true, returnFaceLandmarks: false, returnFaceAttributes: nil, completionBlock: { (faces: [MPOFace]?, err: Error?) in
+                if err  == nil {
                     var faceID: String?
-                    for face in faces {
+                    for face in faces! {
                         faceID = face.faceId
                         print("Face Id: \(faceID)")
                         break
