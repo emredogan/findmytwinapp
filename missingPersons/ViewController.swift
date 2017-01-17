@@ -8,6 +8,7 @@
 
 import UIKit
 import ProjectOxfordFace
+import SystemConfiguration
 
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -156,9 +157,42 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    func isInternetAvailable() -> Bool
+    {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        return (isReachable && !needsConnection)
+    }
+
+    
+//    func sayHello()
+//    {
+//        if player1.faceID == nil {
+//            player1.downloadFaceID()
+//        }
+//        
+//        if player2.faceID == nil {
+//            player2.downloadFaceID()
+//        }
+//    }
+    
     func showErrorAlert() {
         
-        let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and check that you have valid internet connection and try again", preferredStyle: UIAlertControllerStyle.alert)
+        let alert = UIAlertController(title: "Error", message: "Check that you have valid internet connection and try again", preferredStyle: UIAlertControllerStyle.alert)
         let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
         alert.addAction(ok)
         self.present(alert, animated: true, completion: nil)
@@ -167,13 +201,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func checkMatch(_ sender: AnyObject) {
         
+        
+        
+        
         print(self.player1.faceID)
         print(self.player2.faceID)
         
         
         if  self.player1.faceID == nil || self.player2.faceID == nil  {
             
-            showErrorAlert()
+            
+            if isInternetAvailable() == true {
+                
+                let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and try again", preferredStyle: UIAlertControllerStyle.alert)
+                let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
+                alert.addAction(ok)
+                self.present(alert, animated: true, completion: nil)
+                
+            } else if isInternetAvailable() == false {
+                
+                showErrorAlert()
+
+                
+            }
+            
             
             
         } else {
