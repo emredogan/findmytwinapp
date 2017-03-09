@@ -49,11 +49,44 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
+    @IBAction func cam1Source(_ sender: Any) {
+        
+        self.player1.faceID = nil
+        choosePlayer1 = true
+        
+        imagePicker.sourceType = .camera
+        present(imagePicker, animated: true, completion: nil)
+
+        
+        
+        
+    }
+    
+    
+    
+    @IBAction func cam2source(_ sender: Any) {
+        
+        self.player2.faceID = nil
+        
+        choosePlayer2 = true
+        
+        imagePicker.sourceType = .camera
+        
+        present(imagePicker, animated: true, completion: nil)
+
+        
+        
+    }
+    
     
     
     
     var choosePlayer1: Bool = false
     var choosePlayer2: Bool = false
+    
+    var iMinSessions = 6
+    var iTryAgainSessions = 6
+
     
     let imagePicker = UIImagePickerController()
     
@@ -69,7 +102,54 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         imagePicker.delegate = self
         
+        // Create and add the view to the screen.
+        
+        // All done!
+        
+     //   progressHUD.backgroundColor = UIColor.black
+        
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        rateMe()
+        
+        
+        
+    }
+    
+    
+    func rateMe() {
+        var neverRate = UserDefaults.standard.bool(forKey: "neverRate")
+        var numLaunches = UserDefaults.standard.integer(forKey: "numLaunches") + 1
+        
+        if (!neverRate && (numLaunches == iMinSessions || numLaunches >= (iMinSessions + iTryAgainSessions + 1)))
+        {
+            showRateMe()
+            numLaunches = iMinSessions + 1
+        }
+        UserDefaults.standard.set(numLaunches, forKey: "numLaunches")
+    }
+    
+    func showRateMe() {
+        
+        
+        
+        var alert = UIAlertController(title: "Rate Us", message: "Thanks for using -Find My Twin-", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Rate my app", style: UIAlertActionStyle.default, handler: { alertAction in
+            UIApplication.shared.openURL(NSURL(string : "https://itunes.apple.com/app/viewContentsUserReviews?id=1186301141") as! URL)
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "No Thanks", style: UIAlertActionStyle.default, handler: { alertAction in
+            UserDefaults.standard.set(true, forKey: "neverRate")
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Maybe Later", style: UIAlertActionStyle.default, handler: { alertAction in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+
 
     
 
@@ -91,7 +171,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             if choosePlayer1 == true {
                 
-                self.checkForMatchBtn.isUserInteractionEnabled = false
+           //     self.checkForMatchBtn.isUserInteractionEnabled = false
                 
                 player1Img.image = pickedImage
                 
@@ -99,18 +179,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 
                 player1.downloadFaceID()
                 
+                self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
                 
                 
-                
-                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
-                self.checkForMatchBtn.backgroundColor = UIColor.red
-                
-                delay(2) {
-                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
-                    self.checkForMatchBtn.backgroundColor = UIColor.green
-                    self.checkForMatchBtn.isUserInteractionEnabled = true
-                    
-                }
+//                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
+//                self.checkForMatchBtn.backgroundColor = UIColor.red
+//                
+//                delay(2) {
+//                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
+//                    self.checkForMatchBtn.backgroundColor = UIColor.green
+//                    self.checkForMatchBtn.isUserInteractionEnabled = true
+//                    
+//                }
                 
                 
                 
@@ -118,7 +198,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             if choosePlayer2 == true {
                 
-                self.checkForMatchBtn.isUserInteractionEnabled = false
+                self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
+                
+           //     self.checkForMatchBtn.isUserInteractionEnabled = false
                 
                 
                 player2Img.image = pickedImage
@@ -127,15 +209,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 
                 player2.downloadFaceID()
                 
-                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
-                self.checkForMatchBtn.backgroundColor = UIColor.red
-                
-                delay(2) {
-                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
-                    self.checkForMatchBtn.backgroundColor = UIColor.green
-                    self.checkForMatchBtn.isUserInteractionEnabled = true
-                    
-                }
+//                self.checkForMatchBtn.setTitle("Please wait", for: UIControlState())
+//                self.checkForMatchBtn.backgroundColor = UIColor.red
+//                
+//                delay(2) {
+//                    self.checkForMatchBtn.setTitle("Check now", for: UIControlState())
+//                    self.checkForMatchBtn.backgroundColor = UIColor.green
+//                    self.checkForMatchBtn.isUserInteractionEnabled = true
+//                    
+//                }
                 
             }
             
@@ -201,63 +283,109 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func checkMatch(_ sender: AnyObject) {
         
+        let progressHUD = ProgressHUD(text: "Analyzing")
         
         
-        
-        print(self.player1.faceID)
-        print(self.player2.faceID)
-        
-        
-        if  self.player1.faceID == nil || self.player2.faceID == nil  {
+        if player1Img.image == UIImage(named: "profile")! || player2Img.image == UIImage(named: "profile")! {
             
             
-            if isInternetAvailable() == true {
-                
-                let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and try again", preferredStyle: UIAlertControllerStyle.alert)
-                let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
-                alert.addAction(ok)
-                self.present(alert, animated: true, completion: nil)
-                
-            } else if isInternetAvailable() == false {
-                
-                showErrorAlert()
-
-                
-            }
-            
-            
+            let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and try again", preferredStyle: UIAlertControllerStyle.alert)
+            let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
+            progressHUD.removeFromSuperview()
+            UIApplication.shared.endIgnoringInteractionEvents()
             
         } else {
             
-            FaceService.instance.client?.verify(withFirstFaceId: self.player1.faceID, faceId2: self.player2.faceID, completionBlock: { (result:MPOVerifyResult?, err:Error?) in
+            
+            
+            self.view.addSubview(progressHUD)
+            
+            
+            
+            UIApplication.shared.beginIgnoringInteractionEvents()
+            
+            delay(5) {
                 
-                if err == nil {
+                
+                print(self.player1.faceID)
+                print(self.player2.faceID)
+                
+                
+                
+                
+                if  self.player1.faceID == nil || self.player2.faceID == nil  {
                     
-                    print(result?.confidence)
-                    print(result?.isIdentical)
                     
-                    let alert = UIAlertController(title: "Result", message: "Same Person: \(String(describing: result!.isIdentical).capitalized)\n Similarity Rate:  %\(String(format: "%.2f", Double((result?.confidence)!)*100))", preferredStyle: UIAlertControllerStyle.alert)
-                    let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
-                    alert.addAction(ok)
-                    self.present(alert, animated: true, completion: nil)
+                    
+                    
+                    if self.isInternetAvailable() == true {
+                        
+                        let alert = UIAlertController(title: "Error", message: "Please select two images with human faces and try again", preferredStyle: UIAlertControllerStyle.alert)
+                        let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
+                        alert.addAction(ok)
+                        self.present(alert, animated: true, completion: nil)
+                        progressHUD.removeFromSuperview()
+                        UIApplication.shared.endIgnoringInteractionEvents()
+                        
+                    } else if self.isInternetAvailable() == false {
+                        
+                        self.showErrorAlert()
+                        progressHUD.removeFromSuperview()
+                        UIApplication.shared.endIgnoringInteractionEvents()
+                        
+                        
+                    }
                     
                     
                     
                 } else {
                     
-                    print(result.debugDescription)
+                    FaceService.instance.client?.verify(withFirstFaceId: self.player1.faceID, faceId2: self.player2.faceID, completionBlock: { (result:MPOVerifyResult?, err:Error?) in
+                        
+                        if err == nil {
+                            
+                            print(result?.confidence)
+                            print(result?.isIdentical)
+                            
+                            let alert = UIAlertController(title: "Result", message: "Same Person: \(String(describing: result!.isIdentical).capitalized)\n Similarity Rate:  %\(String(format: "%.2f", Double((result?.confidence)!)*100))", preferredStyle: UIAlertControllerStyle.alert)
+                            let ok = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true, completion: nil)
+                            progressHUD.removeFromSuperview()
+                            UIApplication.shared.endIgnoringInteractionEvents()
+                            
+                            
+                            
+                        } else {
+                            
+                            print(result.debugDescription)
+                            progressHUD.removeFromSuperview()
+                            UIApplication.shared.endIgnoringInteractionEvents()
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                    })
+                    
+                    
                     
                 }
                 
-                
-                
-                
-                
-            })
-
-
-         
+            }
+            
         }
+    
+        
+        
+        
+        
+        
+        
         
         
         

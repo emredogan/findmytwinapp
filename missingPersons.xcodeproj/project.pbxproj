@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0AE4AF97737D880334E4E90D /* Pods_missingPersons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92853EA3376FA8AAA23FB338 /* Pods_missingPersons.framework */; };
+		634FD4C31E719B3C0010E5FA /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634FD4C21E719B3C0010E5FA /* Progress.swift */; };
 		635853421DF7FBFC00645C45 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635853411DF7FBFC00645C45 /* Person.swift */; };
 		635853441DF7FD3800645C45 /* FaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635853431DF7FD3800645C45 /* FaceService.swift */; };
 		636436471DEF14B600F0BE88 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636436461DEF14B600F0BE88 /* AppDelegate.swift */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		04506497BF7F37C72D6D36C1 /* Pods-missingPersons.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-missingPersons.debug.xcconfig"; path = "Pods/Target Support Files/Pods-missingPersons/Pods-missingPersons.debug.xcconfig"; sourceTree = "<group>"; };
 		63004B481DF069E7006236F9 /* missingPersons-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "missingPersons-Bridging-Header.h"; sourceTree = "<group>"; };
+		634FD4C21E719B3C0010E5FA /* Progress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
 		635853411DF7FBFC00645C45 /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		635853431DF7FD3800645C45 /* FaceService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceService.swift; sourceTree = "<group>"; };
 		636436431DEF14B600F0BE88 /* missingPersons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = missingPersons.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,6 +96,7 @@
 				636436521DEF14B600F0BE88 /* Info.plist */,
 				63004B481DF069E7006236F9 /* missingPersons-Bridging-Header.h */,
 				635853411DF7FBFC00645C45 /* Person.swift */,
+				634FD4C21E719B3C0010E5FA /* Progress.swift */,
 				635853431DF7FD3800645C45 /* FaceService.swift */,
 			);
 			path = missingPersons;
@@ -234,6 +237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				635853441DF7FD3800645C45 /* FaceService.swift in Sources */,
+				634FD4C31E719B3C0010E5FA /* Progress.swift in Sources */,
 				636436491DEF14B600F0BE88 /* ViewController.swift in Sources */,
 				635853421DF7FBFC00645C45 /* Person.swift in Sources */,
 				636436471DEF14B600F0BE88 /* AppDelegate.swift in Sources */,

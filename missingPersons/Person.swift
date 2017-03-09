@@ -35,6 +35,7 @@ class Person {
                     for face in faces! {
                         faceID = face.faceId
                         print("Face Id: \(faceID)")
+                        
                         break
                     }
                     
@@ -42,9 +43,14 @@ class Person {
                     
                 
             
+                } else {
+                    
+                    
                 }
             })
             
         }
+        
+        
     }
 }
